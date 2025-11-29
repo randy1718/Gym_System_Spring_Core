@@ -1,0 +1,36 @@
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# STS / IntelliJ / Eclipse
+.project
+.classpath
+.settings/
+.idea/
+*.iml
+*.ipr
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Java
+*.class
+
+# Spring Boot
+*.jar
+*.war
+
+# Environment/secret files
+.env
+application.properties
+application.yml

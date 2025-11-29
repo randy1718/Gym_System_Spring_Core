@@ -1,0 +1,16 @@
+{
+  "trainers": [
+    { "id": "t1", "firstName": "John", "lastName": "Doe", "specialization": "Cardio" },
+    { "id": "t2", "firstName": "Ana", "lastName": "Lopez", "specialization": "Strength" }
+  ],
+  "trainees": [
+    { "id": "u1", "firstName": "Maria", "lastName": "Diaz", "address": "Street 123" },
+    { "id": "u2", "firstName": "Alex", "lastName": "Perez", "address": "Street 917" }
+  ],
+   "trainings": [
+    { "traineeId": "u1", "trainerId": "t1", "trainingName": "Cardio_John", "trainingType": {"name": "Cardio"}, "date":"2025-11-22 10:00:00", "duration": "60"}
+  ],
+  "trainingTypes": [
+    { "name": "Cardio" }
+  ]
+}
