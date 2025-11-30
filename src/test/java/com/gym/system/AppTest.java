@@ -317,12 +317,18 @@ public class AppTest
             trainee.setId("u4");
 
             facade.createTrainee(trainee);
+            
+            Map<String, TrainingType> trainingTypes = context.getBean("trainingTypeStorage", Map.class);
+            TrainingType type = new TrainingType();
+            type.setName("Definicion");
+            trainingTypes.put(type.getName(), type);
 
             Training training = new Training();
             training.setTrainerId("t5");
             training.setTraineeId("u4");
             training.setDate("2025-11-29 20:00:00");
             training.setDuration(120);
+            training.setTrainingType(type);
 
             facade.createTraining(training);
 
@@ -332,6 +338,7 @@ public class AppTest
                 () -> assertTrue(foundTraining.isPresent(), "Training was not found"),
                 () -> assertEquals("u4", foundTraining.get().getTraineeId(), "trainee ID mismatch"),
                 () -> assertEquals("t5", foundTraining.get().getTrainerId(), "trainer ID mismatch"),
+                () -> assertEquals("Definicion", foundTraining.get().getTrainingType().getName(), "training type mismatch"),
                 () -> assertEquals("2025-11-29 20:00:00", foundTraining.get().getDate(), "date mismatch")
             );
         }
