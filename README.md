@@ -9,8 +9,8 @@ Before cloning and running the project, make sure the PC has:
 - **Maven 3.8+**
 - **Git**
 
-To verify:
+To verify, run:
 
-java -version
-mvn -version
-git --version
+- java -version
+- mvn -version
+- git --version
