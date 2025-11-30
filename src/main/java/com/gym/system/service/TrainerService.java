@@ -24,7 +24,9 @@ public class TrainerService {
         String username = t.getFirstName() + "." + t.getLastName();
         t.setUsername(checkUsernameDuplicates(username));
         t.setPassword(PasswordGenerator.generate());
-        t.setId("t" + (trainerDAO.findAll().size() + 1));
+        if(t.getId() == null){
+            t.setId("t" + (trainerDAO.findAll().size() + 1));
+        }
         t.setIsActive(true);
         trainerDAO.save(t);
     }

@@ -84,6 +84,7 @@ public class AppTest
             trainer.setLastName("Rosales");
 
             facade.createTrainer(trainer);
+            //facade.createTrainer(trainer);
 
             var savedTrainer = facade.findAllTrainers()
                     .stream()
@@ -258,16 +259,80 @@ public class AppTest
 
             facade.createTrainee(trainee);
 
-            var savedTrainee = facade.findAllTrainees()
-                    .stream()
-                    .filter(t -> t.getUsername().equals("John.Swift"))
-                    .findFirst();
-
             Optional<Trainee> foundTrainee = facade.findTraineeById("u9");
             
-            assertAll("the trainee should be founded correctly",
-                () -> assertTrue(savedTrainee.isPresent(), "Trainee was not saved"),
-                () -> assertFalse(foundTrainee.isEmpty(), "the trainee was not found")
+            assertAll("Trainee should be found and have correct data",
+                () -> assertTrue(foundTrainee.isPresent(), "Trainee was not found"),
+                () -> assertEquals("u9", foundTrainee.get().getId(), "ID mismatch"),
+                () -> assertEquals("John", foundTrainee.get().getFirstName(), "First name mismatch"),
+                () -> assertEquals("Swift", foundTrainee.get().getLastName(), "Last name mismatch")
+            );
+        }
+    }
+
+    @Test
+    @DisplayName("Facade should retrieve the trainer by using an id.")
+    void shouldFindTrainerCorrectly() {
+        try (ConfigurableApplicationContext context =
+            new AnnotationConfigApplicationContext(AppConfig.class)) {
+
+            GymServices facade = context.getBean(GymServices.class);
+
+            Trainer trainer = new Trainer();
+            trainer.setFirstName("Alejandro");
+            trainer.setLastName("Pereira");
+            trainer.setId("t7");
+
+            facade.createTrainer(trainer);
+
+            Optional<Trainer> foundTrainer = facade.findTrainerById("t7");
+            
+            assertAll("Trainer should be found and have correct data",
+                () -> assertTrue(foundTrainer.isPresent(), "Trainer was not found"),
+                () -> assertEquals("t7", foundTrainer.get().getId(), "ID mismatch"),
+                () -> assertEquals("Alejandro", foundTrainer.get().getFirstName(), "First name mismatch"),
+                () -> assertEquals("Pereira", foundTrainer.get().getLastName(), "Last name mismatch")
+            );
+        }
+    }
+
+    @Test
+    @DisplayName("Facade should retrieve the training by using an id.")
+    void shouldFindTrainingCorrectly() {
+        try (ConfigurableApplicationContext context =
+            new AnnotationConfigApplicationContext(AppConfig.class)) {
+
+            GymServices facade = context.getBean(GymServices.class);
+
+            Trainer trainer = new Trainer();
+            trainer.setFirstName("Luis");
+            trainer.setLastName("Gomez");
+            trainer.setId("t5");
+
+            facade.createTrainer(trainer);
+
+            Trainee trainee = new Trainee();
+            trainee.setFirstName("Daniela");
+            trainee.setLastName("Suazez");
+            trainee.setId("u4");
+
+            facade.createTrainee(trainee);
+
+            Training training = new Training();
+            training.setTrainerId("t5");
+            training.setTraineeId("u4");
+            training.setDate("2025-11-29 20:00:00");
+            training.setDuration(120);
+
+            facade.createTraining(training);
+
+            Optional<Training> foundTraining = facade.findTrainingById("u4-t5-2025-11-29 20:00:00");
+            
+            assertAll("Training should be found and have correct data",
+                () -> assertTrue(foundTraining.isPresent(), "Training was not found"),
+                () -> assertEquals("u4", foundTraining.get().getTraineeId(), "trainee ID mismatch"),
+                () -> assertEquals("t5", foundTraining.get().getTrainerId(), "trainer ID mismatch"),
+                () -> assertEquals("2025-11-29 20:00:00", foundTraining.get().getDate(), "date mismatch")
             );
         }
     }
@@ -286,23 +351,78 @@ public class AppTest
 
             facade.createTrainee(trainee);
 
-            var savedTrainee = facade.findAllTrainees()
+            Optional<Trainee> savedTrainee = facade.findAllTrainees()
                     .stream()
                     .filter(t -> t.getUsername().equals("Lisa.Paz"))
                     .findFirst();
+            
+            assertTrue(savedTrainee.isPresent(), "Trainee was not saved");
 
-            savedTrainee.get().setAddress("street 8th 5 - 43");
-            facade.updateTrainee(savedTrainee.get());
+            Trainee saved = savedTrainee.get();
+            saved.setAddress("street 8th 5 - 43");
 
-            var updatedTrainee = facade.findAllTrainees()
+            facade.updateTrainee(saved);
+
+            Optional<Trainee> updatedTrainee = facade.findAllTrainees()
                     .stream()
                     .filter(t -> t.getUsername().equals("Lisa.Paz"))
                     .findFirst();
             
             assertAll("Trainee should be updated correctly",
-                () -> assertTrue(savedTrainee.isPresent(), "Trainee was not saved"),
-                () -> assertEquals("street 8th 5 - 43", updatedTrainee.get().getAddress(),
-                        "Address is not updated")
+                () -> assertEquals("street 8th 5 - 43",
+                        updatedTrainee.get().getAddress(),
+                        "Address was not updated"),
+                () -> assertEquals("Lisa",
+                        updatedTrainee.get().getFirstName(),
+                        "First name should remain unchanged"),
+                () -> assertEquals("Paz",
+                        updatedTrainee.get().getLastName(),
+                        "Last name should remain unchanged")
+            );
+        }
+    }
+
+    @Test
+    @DisplayName("Facade should update Trainer correctly")
+    void shouldUpdateTrainerCorrectly() {
+        try (ConfigurableApplicationContext context =
+            new AnnotationConfigApplicationContext(AppConfig.class)) {
+
+            GymServices facade = context.getBean(GymServices.class);
+
+            Trainer trainer = new Trainer();
+            trainer.setFirstName("Julian");
+            trainer.setLastName("Sopo");
+
+            facade.createTrainer(trainer);
+
+            Optional<Trainer> savedTrainer = facade.findAllTrainers()
+                    .stream()
+                    .filter(t -> t.getUsername().equals("Julian.Sopo"))
+                    .findFirst();
+            
+            assertTrue(savedTrainer.isPresent(), "Trainer was not saved");
+
+            Trainer saved = savedTrainer.get();
+            saved.setSpecialization("Cross-fit");
+
+            facade.updateTrainer(saved);
+
+            Optional<Trainer> updatedTrainer = facade.findAllTrainers()
+                    .stream()
+                    .filter(t -> t.getUsername().equals("Julian.Sopo"))
+                    .findFirst();
+            
+            assertAll("Trainer should be updated correctly",
+                () -> assertEquals("Cross-fit",
+                        updatedTrainer.get().getSpecialization(),
+                        "Specialization was not updated"),
+                () -> assertEquals("Julian",
+                        updatedTrainer.get().getFirstName(),
+                        "First name should remain unchanged"),
+                () -> assertEquals("Sopo",
+                        updatedTrainer.get().getLastName(),
+                        "Last name should remain unchanged")
             );
         }
     }
