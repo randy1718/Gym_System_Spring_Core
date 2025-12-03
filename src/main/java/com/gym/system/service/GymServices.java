@@ -5,9 +5,9 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
-import com.gym.system.Trainee;
-import com.gym.system.Trainer;
-import com.gym.system.Training;
+import com.gym.system.model.Trainee;
+import com.gym.system.model.Trainer;
+import com.gym.system.model.Training;
 
 @Component
 public class GymServices {

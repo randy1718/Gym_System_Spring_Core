@@ -9,7 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.*;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.gym.system.Storage.StorageInitializer;
+import com.gym.system.config.AppConfig;
+import com.gym.system.model.TrainingType;
+import com.gym.system.repository.initializer.StorageInitializer;
 import com.gym.system.service.GymServices;
 
 public class App {
@@ -23,13 +25,13 @@ public class App {
         Map<String, TrainingType> trainingTypes = context.getBean("trainingTypeStorage", Map.class);
         List<TrainingType> trainingTypeList = trainingTypes.values().stream().collect(Collectors.toList());
         
-        System.out.println("Loaded trainees:-------------");
+        logger.info("Loaded trainees:-------------");
         facade.findAllTrainees().forEach(System.out::println);
-        System.out.println("Loaded trainers:-------------");
+        logger.info("Loaded trainers:-------------");
         facade.findAllTrainers().forEach(System.out::println);
-        System.out.println("Loaded trainings:-------------");
+        logger.info("Loaded trainings:-------------");
         facade.findAllTrainings().forEach(System.out::println);
-        System.out.println("Loaded training Types:-------------");
+        logger.info("Loaded training Types:-------------");
         trainingTypeList.forEach(System.out::println);
     }
 }

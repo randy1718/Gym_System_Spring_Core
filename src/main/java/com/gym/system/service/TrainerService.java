@@ -5,14 +5,16 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.gym.system.Trainer;
-import com.gym.system.DAO.TrainerDAO;
-import com.gym.system.Storage.PasswordGenerator;
+import com.gym.system.model.Trainer;
+import com.gym.system.repository.TrainerDAO;
 
 @Service
 public class TrainerService {
 
+    private static final Logger logger = LoggerFactory.getLogger(TrainerService.class);
     private final TrainerDAO trainerDAO;
 
     @Autowired
@@ -21,46 +23,22 @@ public class TrainerService {
     }
 
     public void create(Trainer t){
-        String username = t.getFirstName() + "." + t.getLastName();
-        t.setUsername(checkUsernameDuplicates(username));
-        t.setPassword(PasswordGenerator.generate());
-        if(t.getId() == null){
-            t.setId("t" + (trainerDAO.findAll().size() + 1));
-        }
-        t.setIsActive(true);
+        logger.info("Service: Creating trainer {} {}", t.getFirstName(), t.getLastName());
         trainerDAO.save(t);
     }
 
     public void update(Trainer t){
-        trainerDAO.save(t);
+        logger.info("Service: Updating trainer with id {}", t.getId());
+        trainerDAO.update(t);
     }
 
     public Optional<Trainer> findById(String id){
+        logger.info("Service: Finding trainer with id {}", id);
         return trainerDAO.findById(id);
     }
 
     public List<Trainer> findAll(){
+        logger.info("Service: Retrieving all trainers");
         return trainerDAO.findAll();
-    }
-
-    private String checkUsernameDuplicates(String baseUsername) {
-
-        List<Trainer> trainers = trainerDAO.findAll();
-        boolean exists = trainers.stream()
-                .anyMatch(t -> t.getUsername().equalsIgnoreCase(baseUsername));
-
-        if (!exists) return baseUsername;
-
-        int counter = 1;
-
-        while (true) {
-            String newUsername = baseUsername + counter;
-            boolean conflict = trainers.stream()
-                    .anyMatch(t -> t.getUsername().equalsIgnoreCase(newUsername));
-
-            if (!conflict) return newUsername;
-
-            counter++;
-        }
     }
 }

@@ -10,14 +10,24 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.gym.system.Storage.PasswordGenerator;
+import com.gym.system.config.AppConfig;
+import com.gym.system.model.Trainee;
+import com.gym.system.model.Trainer;
+import com.gym.system.model.Training;
+import com.gym.system.model.TrainingType;
 import com.gym.system.service.GymServices;
+import com.gym.system.util.PasswordGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Unit test for simple App.
  */
 public class AppTest 
 {
+
+    private static final Logger logger = LoggerFactory.getLogger(AppTest.class);
+
     @Test
     @DisplayName("Storage should be initialized with the sample data from the JSON file")
     public void StorageInitializedCorreclty()
@@ -56,7 +66,7 @@ public class AppTest
                     .filter(t -> t.getFirstName().equals("Lucas"))
                     .findFirst();
             
-            System.out.println("Loaded trainees:-------------");
+            logger.info("Loaded trainees:-------------");
             facade.findAllTrainees().forEach(System.out::println);
             
             assertAll("New trainee should be created correctly",
@@ -91,7 +101,7 @@ public class AppTest
                     .filter(t -> t.getFirstName().equals("Fernando"))
                     .findFirst();
             
-            System.out.println("Loaded trainers:-------------");
+            logger.info("Loaded trainers:-------------");
             facade.findAllTrainers().forEach(System.out::println);
             
             assertAll("New trainer should be created correctly",
@@ -154,7 +164,7 @@ public class AppTest
                     .filter(t -> t.getTrainingName().equals("training volumen - Lucas"))
                     .findFirst();
             
-            System.out.println("Loaded trainings:-------------");
+            logger.info("Loaded trainings:-------------");
             facade.findAllTrainings().forEach(System.out::println);
             
             assertAll("New training should be created correctly",

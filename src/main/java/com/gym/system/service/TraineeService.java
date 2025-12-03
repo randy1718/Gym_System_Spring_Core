@@ -4,14 +4,16 @@ import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.gym.system.Trainee;
-import com.gym.system.DAO.TraineeDAO;
-import com.gym.system.Storage.PasswordGenerator;
+import com.gym.system.model.Trainee;
+import com.gym.system.repository.TraineeDAO;
 
 @Service
 public class TraineeService {
 
+    private static final Logger logger = LoggerFactory.getLogger(TraineeService.class);
     private final TraineeDAO traineeDAO;
 
     @Autowired
@@ -20,50 +22,27 @@ public class TraineeService {
     }
 
     public void create(Trainee t){
-        String username = t.getFirstName() + "." + t.getLastName();
-        t.setUsername(checkUsernameDuplicates(username));
-        t.setPassword(PasswordGenerator.generate());
-        if(t.getId() == null){
-            t.setId("u" + (traineeDAO.findAll().size() + 1));
-        }
-        t.setIsActive(true);
+        logger.info("Service: Creating trainee {} {}", t.getFirstName(), t.getLastName());
         traineeDAO.save(t);
     }
 
     public void update(Trainee t){
-        traineeDAO.save(t);
+        logger.info("Service: Updating trainee with id {}", t.getId());
+        traineeDAO.update(t);
     }
 
     public void delete(String id){
+        logger.info("Service: Deleting trainee with id {}", id);
         traineeDAO.delete(id);
     }
 
     public Optional<Trainee> findById(String id){
+        logger.info("Service: Finding trainee with id {}", id);
         return traineeDAO.findById(id);
     }
 
     public List<Trainee> findAll(){
+        logger.info("Service: Retrieving all trainees");
         return traineeDAO.findAll();
-    }
-
-    private String checkUsernameDuplicates(String baseUsername) {
-
-        List<Trainee> trainees = traineeDAO.findAll();
-        boolean exists = trainees.stream()
-                .anyMatch(t -> t.getUsername().equalsIgnoreCase(baseUsername));
-
-        if (!exists) return baseUsername;
-
-        int counter = 1;
-
-        while (true) {
-            String newUsername = baseUsername + counter;
-            boolean conflict = trainees.stream()
-                    .anyMatch(t -> t.getUsername().equalsIgnoreCase(newUsername));
-
-            if (!conflict) return newUsername;
-
-            counter++;
-        }
     }
 }
